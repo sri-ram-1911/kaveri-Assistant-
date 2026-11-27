@@ -10,6 +10,9 @@
 *.csv
 *.zip
 
+# Runtime conversation logs may contain user or business data
+run_log.jsonl
+
 # Python and test artifacts
 __pycache__/
 *.py[cod]
