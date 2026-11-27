@@ -56,10 +56,17 @@ DATABASE_URL=sqlite:///kaveri.db
 LLM_TIMEOUT=300
 ```
 
-The client connects to Ollama's OpenAI-compatible endpoint. Ensure Ollama is running and
-the configured model is available (`ollama pull qwen2.5:3b`). To use another provider, set
-its OpenAI-compatible base URL, API key, and model instead. `DATABASE_URL` defaults to a
-`kaveri.db` file beside `chat_demo.py`.
+The client connects to Ollama's OpenAI-compatible endpoint. To keep model files off the
+system drive, start Ollama with the included script (quit the tray app first if it already
+owns port 11434):
+
+```powershell
+.\scripts\start_ollama.ps1
+```
+
+In another terminal, make the model available with `ollama pull qwen2.5:3b`. To use another
+provider, set its OpenAI-compatible base URL, API key, and model instead. `DATABASE_URL`
+defaults to a `kaveri.db` file beside `chat_demo.py`.
 
 ### Build the Midstone 2 database
 

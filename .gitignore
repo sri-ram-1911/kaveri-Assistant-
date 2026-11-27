@@ -9,6 +9,7 @@
 *.sqlite3
 *.csv
 *.zip
+ollama_models/
 
 # Runtime conversation logs may contain user or business data
 run_log.jsonl
