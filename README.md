@@ -45,21 +45,36 @@ python -m pip install -r requirements.txt
 
 ## Environment configuration
 
-Copy `.env.example` to `.env`, then set values for your provider. Do not put real keys in
-source control.
+Copy `.env.example` to `.env`. Its defaults connect to a local Ollama service and require
+no API secret. Do not put real provider keys in source control.
 
 ```dotenv
-LLM_BASE_URL=https://openrouter.ai/api/v1
-LLM_API_KEY=your-provider-key
-LLM_MODEL=provider/model-name
+LLM_BASE_URL=http://localhost:11434/v1
+LLM_API_KEY=ollama
+LLM_MODEL=qwen2.5:3b
 DATABASE_URL=sqlite:///kaveri.db
 LLM_TIMEOUT=300
 ```
 
-The same client can connect to OpenRouter, Ollama, or another OpenAI-compatible endpoint.
-`LLM_BASE_URL`, `LLM_API_KEY`, and `LLM_MODEL` are required. `DATABASE_URL` defaults to a
-`kaveri.db` file beside `chat_demo.py`; set it to the location of your actual Midstone 2
-database if needed.
+The client connects to Ollama's OpenAI-compatible endpoint. Ensure Ollama is running and
+the configured model is available (`ollama pull qwen2.5:3b`). To use another provider, set
+its OpenAI-compatible base URL, API key, and model instead. `DATABASE_URL` defaults to a
+`kaveri.db` file beside `chat_demo.py`.
+
+### Build the Midstone 2 database
+
+The repository consumes the actual Midstone 2 CSV pack. With the files in
+`D:\Midstone 2\data\raw`, build the ignored local database with:
+
+```powershell
+python scripts/build_database.py
+```
+
+The loader follows `data_dictionary.md`, removes exact duplicate rows, trims whitespace,
+normalizes ISO and `DD/MM/YYYY` dates, checks the 128 cleaned customer count, and creates
+the five related tables with SQLAlchemy and foreign keys. It refuses to overwrite an
+existing database. For a different input folder or output path, use `--csv-dir` and
+`--database`.
 
 ## Run the demonstration
 

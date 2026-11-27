@@ -50,6 +50,7 @@ def rate_limit(headers=None):
 
 
 def test_environment_configuration_validation(monkeypatch):
+    monkeypatch.setenv("PYTHON_DOTENV_DISABLED", "true")
     monkeypatch.delenv("LLM_BASE_URL", raising=False)
     monkeypatch.delenv("LLM_API_KEY", raising=False)
     monkeypatch.delenv("LLM_MODEL", raising=False)

@@ -9,10 +9,12 @@ from pathlib import Path
 
 from sqlalchemy import create_engine, text
 from sqlalchemy.exc import SQLAlchemyError
+from dotenv import load_dotenv
 
 from src.llm_client import Conversation, LLMClient, RunLog, tool_spec
 
 ROOT = Path(__file__).resolve().parent
+load_dotenv(ROOT / ".env")
 LOG_PATH = ROOT / "run_log.jsonl"
 DATABASE_URL = os.getenv("DATABASE_URL", f"sqlite:///{(ROOT / 'kaveri.db').as_posix()}")
 engine = create_engine(DATABASE_URL)
