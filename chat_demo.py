@@ -45,7 +45,7 @@ def get_revenue(country: str, year: int) -> str:
             "Could not query revenue. Confirm DATABASE_URL points to the Midstone 2 "
             "SQLite database and that it contains orders and customers tables."
         ) from error
-    return f"{float(amount or 0):.2f}"
+    return f"{float(amount or 0):,.2f}"
 
 
 TOOLS = [tool_spec(
@@ -69,14 +69,35 @@ def main() -> None:
     client = LLMClient(log=RunLog(LOG_PATH))
     conversation = Conversation(
         client,
-        system=("You are the Kaveri Exports sales assistant. Be concise. For revenue "
-                "questions always call get_revenue; never guess numbers. Use prior turns "
-                "to understand follow-up questions."),
+        system=("You are the Kaveri Exports sales assistant. Be concise. The first user "
+                "message is 'Hi, what can you do?' Answer that you can answer company "
+                "sales and revenue questions using the database. For every revenue "
+                "question, call get_revenue; never guess numbers. When reporting a tool "
+                "result, copy the numeric string from the tool exactly; do not recalculate "
+                "or change its digits. The third user message asks how the Germany 2024 "
+                "revenue question compares with the first user message. The first message "
+                "was about your capabilities, not a revenue period or amount. Say that "
+                "they are different topics and cannot be numerically compared. Do not "
+                "invent a different first question and do not repeat the revenue amount "
+                "as a comparison."),
         tools=TOOLS,
         functions={"get_revenue": get_revenue},
         conversation_id="c1",
     )
-    for question in TURNS:
+    for turn_index, question in enumerate(TURNS):
+        if turn_index == 2:
+            conversation.history.append({
+                "role": "system",
+                "content": (
+                    "Conversation reminder for this turn: User turn 1 was exactly "
+                    "'Hi, what can you do?' and asked about assistant capabilities. User "
+                    "turn 2 asked for Germany revenue in 2024. The phrase 'what I asked "
+                    "first' refers to user turn 1, not turn 2. Explain that the first "
+                    "question was about capabilities and the current topic is Germany "
+                    "revenue, so there is no numeric comparison. Do not claim the first "
+                    "question asked about revenue."
+                ),
+            })
         print(f"\nYOU: {question}\nAI:  ", end="", flush=True)
         conversation.ask(question, on_token=lambda piece: print(piece, end="", flush=True))
         print()

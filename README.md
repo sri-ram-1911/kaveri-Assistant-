@@ -52,6 +52,7 @@ no API secret. Do not put real provider keys in source control.
 LLM_BASE_URL=http://localhost:11434/v1
 LLM_API_KEY=ollama
 LLM_MODEL=qwen2.5:3b
+LLM_TEMPERATURE=0.0
 DATABASE_URL=sqlite:///kaveri.db
 LLM_TIMEOUT=300
 ```

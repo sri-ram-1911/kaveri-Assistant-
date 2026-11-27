@@ -32,6 +32,7 @@ def configured(monkeypatch, completions, **kwargs):
     monkeypatch.setenv("LLM_BASE_URL", "https://llm.example/v1")
     monkeypatch.setenv("LLM_API_KEY", "unit-test-only")
     monkeypatch.setenv("LLM_MODEL", "test-model")
+    monkeypatch.setenv("LLM_TEMPERATURE", "0.0")
     return LLMClient(client=fake_client(completions), **kwargs)
 
 
@@ -72,10 +73,12 @@ def test_conversation_initialization_and_message_history(monkeypatch):
 
 
 def test_non_streaming_response(monkeypatch):
-    client = configured(monkeypatch, FakeCompletions(response("non-streamed")))
+    completions = FakeCompletions(response("non-streamed"))
+    client = configured(monkeypatch, completions)
     reply = client.chat([{"role": "user", "content": "hi"}], stream=False)
     assert reply.content == "non-streamed"
     assert reply.streamed is False
+    assert completions.calls[0]["temperature"] == 0.0
 
 
 def test_streaming_reconstruction_and_chunk_count(monkeypatch):

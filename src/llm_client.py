@@ -57,6 +57,7 @@ class LLMClient:
         self.base_url = os.getenv("LLM_BASE_URL", "").strip()
         api_key = os.getenv("LLM_API_KEY", "").strip()
         self.model = os.getenv("LLM_MODEL", "").strip()
+        self.temperature = float(os.getenv("LLM_TEMPERATURE", "0.0"))
         missing = [name for name, value in (("LLM_BASE_URL", self.base_url),
                                              ("LLM_API_KEY", api_key),
                                              ("LLM_MODEL", self.model)) if not value]
@@ -117,6 +118,7 @@ class LLMClient:
         """Send a chat request and optionally deliver text chunks as they arrive."""
         started = time.perf_counter()
         params: dict[str, Any] = {"messages": messages}
+        params["temperature"] = self.temperature
         if tools:
             params["tools"] = tools
         reply = Reply(streamed=stream, model=self.model)
